@@ -86,30 +86,50 @@ let round3 = new Round({
 });*/
 
 async function innerLoop(roundNum, playerNum){
-  console.log(playerNum);
-  //onsole.log(numberOfPlayers);
-          
-  // console.log("J index" +j);
+  
+  //console.log("Round number: "+roundNum);
+  console.log("round number: "+roundNum);
   let players = await Player.find({});
+  console.log("Player name: "+players[playerNum].name)
+  // console.log("J index" +j);
+  
+  
   let currPlayer = players[playerNum];
+  let id = currPlayer._id.toString();
   //console.log(currPlayer);
   if (!currPlayer.isEliminated){
       if (currPlayer.hasPassedCurrRound && currPlayer.hasSubmittedCurrRound){
-        console.log(currPlayer.name+" has passed on round ")
-        let id = currPlayer._id.toString();
-    Player.findByIdAndUpdate(id, {hasSubmittedCurrRound: 'false', hasPassedCurrRound:'false'},
-      function (err, docs){
-        if (err){
-          console.log(err);
-        }else{
-          console.log("Updated user: "+docs);
-        }
-      }
-    
-      )
+
+        console.log(currPlayer.name+" has passed on round "+roundNum)
+        
+
+        Player.findByIdAndUpdate(id, {hasSubmittedCurrRound: 'false', hasPassedCurrRound:'false'},
+          function (err, docs){
+            if (err){
+              console.log(err);
+            }else{
+             // console.log("Updated user: "+docs.name);
+            }
+          }
+        
+        )
       }else{
-        console.log(currPlayer.name+" has not passed on round ")
+
+        Player.findByIdAndUpdate(id, {isEliminated:'true'},
+          function (err, docs){
+            if (err){
+              console.log(err);
+            }else{
+              console.log(docs.name+" has been eliminated");
+            }
+          }
+        
+        )
+
+        console.log(currPlayer.name+" has been eliminated ")
       }
+  } else{
+    console.log(currPlayer.name+" has been eliminated");
   }
 }
 
@@ -125,28 +145,48 @@ round3.save();
   Round.count({}).then(async (numberOfRounds)=>{
 
   for ( i = 0; i < numberOfRounds; i++){
+    
+    let rounds = await Round.find({});
+    let currentRound = rounds[i];
     let roundNum = i;
+    let numberOfPlayers = await Player.count({});
+    let date = new Date(currentRound.date[0],currentRound.date[1], currentRound.date[2], currentRound.date[3], currentRound.date[4], currentRound.date[5], currentRound.date[6]);
+
+    for (j = 0; j < numberOfPlayers; j++){
+      let playerNum = j;
+       const job = await schedule.scheduleJob(date, async function(){
+            //console.log("Job scheduoled")
+            innerLoop(roundNum, playerNum);
+        }) 
+    }
+    
+    
+
+
+    /*let roundNum = i;
+
         let rounds = await Round.find({});
-        let currentRound = rounds[i];
+        let currentRound = rounds[0];
         
         let date = new Date(currentRound.date[0],currentRound.date[1], currentRound.date[2], currentRound.date[3], currentRound.date[4], currentRound.date[5], currentRound.date[6]);
-        let numberOfPlayers = await Player.count({});
-        for (j = 0; j < numberOfPlayers; j++){
-          
-            const job = await schedule.scheduleJob(date, async function(){
-          innerLoop(roundNum, playerNum)
-        })  
         
+        let numberOfPlayers = await Player.count({});*/
+/*
+        for (j = 0; j < numberOfPlayers; j++){
           let playerNum = j;
-          //console.log(number);
+            const job = await schedule.scheduleJob(date, async function(){
+            console.log("Job")
+        })  
+        */
+        
+
           
-          }
 
          
-
+        }
         
 
-        }
+        
   });
   
     
@@ -237,14 +277,28 @@ app.get('/', (req, res)=>{
 
 
   
-
-     res.sendFile(__dirname + '/views/homePage/index.html');
+      res.sendFile(__dirname + '/views/addDare/index.html');
+     
 
 });
 
+app.get('/players', async (req, res)=>{
+  let players = await Player.find({});
+  res.json(players);
+})
+
+app.post('/toggleSubmit', (req, res)=>{
+  let user = req.body;
+  console.log(req.body);
+})
+app.post('/toggleNotSubmit', (req, res)=>{
+  let user = req.body.user;
+  
+})
+
 app.get('/addDare', (req, res)=>{
 
-       res.sendFile(__dirname + '/views/addDare/index.html');
+       
 
   
 })
