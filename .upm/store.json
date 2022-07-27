@@ -1,0 +1,1 @@
+{"version":2,"languages":{"nodejs-npm":{"specfileHash":"f1552dca3ab7622b7de22607c7a13b32","lockfileHash":"97c06cd79ff6386137a4ca3d3758e3ee","guessedImports":["gridfs-stream","multer-gridfs-storage","mongoose","express","body-parser","multer","method-override","mongodb","node-schedule"],"guessedImportsHash":"5c8afec55a14b3ac96f6537316ee2345"}}}
