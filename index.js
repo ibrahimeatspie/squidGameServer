@@ -50,11 +50,11 @@ let CurrDate = new Date();
 
 
 
-let date1 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+3, CurrDate.getMilliseconds()];
+let date1 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+1, CurrDate.getMilliseconds()];
 
-let date2 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+6, CurrDate.getMilliseconds()];
+let date2 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+60, CurrDate.getMilliseconds()];
 
-let date3 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+9, CurrDate.getMilliseconds()];
+let date3 = [CurrDate.getFullYear(), CurrDate.getMonth(), CurrDate.getDate(), CurrDate.getHours(), CurrDate.getMinutes(), CurrDate.getSeconds()+120, CurrDate.getMilliseconds()];
 
 
 //let date3 = [jobDate1.getFullYear(), jobDate1.getMonth(), jobDate1.getDate(), jobDate1.getHours(), jobDate1.getMinutes(), jobDate1.getSeconds()+6, jobDate1.getMilliseconds()];
@@ -90,7 +90,7 @@ async function innerLoop(roundNum, playerNum){
   //console.log("Round number: "+roundNum);
   console.log("round number: "+roundNum);
   let players = await Player.find({});
-  console.log("Player name: "+players[playerNum].name)
+  console.log("Player name: "+players[playerNum].name+" status: "+players[playerNum].hasSubmittedCurrRound + ", "+players[playerNum].hasPassedCurrRound);
   // console.log("J index" +j);
   
   
@@ -120,13 +120,12 @@ async function innerLoop(roundNum, playerNum){
             if (err){
               console.log(err);
             }else{
-              console.log(docs.name+" has been eliminated");
+              console.log(docs.name+" has just been eliminated");
             }
           }
         
         )
 
-        console.log(currPlayer.name+" has been eliminated ")
       }
   } else{
     console.log(currPlayer.name+" has been eliminated");
@@ -288,11 +287,37 @@ app.get('/players', async (req, res)=>{
 })
 
 app.post('/toggleSubmit', (req, res)=>{
-  let user = req.body;
-  console.log(req.body);
+  let userID = req.body._id;
+  console.log(userID);
+  Player.findByIdAndUpdate(userID, {hasSubmittedCurrRound:'true', hasPassedCurrRound:'true'},
+          function (err, docs){
+            if (err){
+              console.log(err);
+            }else{
+              console.log(docs.name+" has been eliminated");
+            }
+          }
+        
+        )
+
+  //here we need to edit the given user to have their hasSubmittedCurrentRound as true
+
 })
 app.post('/toggleNotSubmit', (req, res)=>{
-  let user = req.body.user;
+
+  let userID = req.body._id;
+  console.log(userID);
+  Player.findByIdAndUpdate(userID, {hasSubmittedCurrRound:'false', hasPassedCurrRound:'false'},
+          function (err, docs){
+            if (err){
+              console.log(err);
+            }else{
+              console.log(docs.name+" has been eliminated");
+            }
+          }
+        
+        )
+
   
 })
 

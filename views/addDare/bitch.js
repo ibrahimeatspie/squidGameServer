@@ -35,7 +35,7 @@ function verifyUser(users){
 
 function submit(){
   const data = user;
-
+  //here we are making the post request 
   fetch('http://localhost:5002/toggleSubmit', {
     method: 'POST', // or 'PUT'
     headers: {
@@ -56,5 +56,23 @@ function submit(){
 }
 
 function notSubmit(){
+  const data = user;
+  //here we are making the post request 
+  fetch('http://localhost:5002/toggleSubmit', {
+    method: 'POST', // or 'PUT'
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    console.log('Success:', data);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+  
+
   console.log(user.name+" has toggled to not submit")
 }
